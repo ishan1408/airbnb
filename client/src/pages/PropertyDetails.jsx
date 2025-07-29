@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/lab";
 import { CircularProgress, Rating, TextField } from "@mui/material";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { bookProperty } from "../api";
+import { getPropertyDetails, bookProperty } from "../api";
 import { openSnackbar } from "../redux/reducers/snackbarSlice";
 import Button from "../componnents/Button";
 
@@ -75,153 +75,26 @@ const BookingContainer = styled.div`
 `;
 
 const PropertyDetails = () => {
-  const { id } = useParams(); 
-  const navigate = useNavigate();
+  const {id} = useParams();
+  const [startDate,setStartDate] = useState(null)
+  const [endDate,setEndDate] = useState(null)
+  const [property,setProperty] = useState()
+  const [loading,setLoading] = useState(false)
 
-
-  const propertyList  = [
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-  ];
-
-  const property = propertyList.find((item) => item._id === id);
-
-  if (!property) {
-    return <p>Property not found</p>;
+  const getPropertyDetailsById = async () => {
+    setLoading(true)
+    await getPropertyDetails(id).then((res) => {
+      setProperty(res.data)
+      setLoading(false)
+    })
   }
 
+  useEffect(() => {
+    getPropertyDetailsById();
+  },[])
+
    return (
-    <Container>
+    <>{loading ? <CircularProgress/> : <Container>
       <Image src={property?.img} alt={property?.title} />
       <Right>
         <Title>{property?.title}</Title>
@@ -234,7 +107,7 @@ const PropertyDetails = () => {
         </Price>
 
         <RatingContainer>
-          <Rating value={parseFloat(property?.rating)} readOnly />
+          <Rating value={property?.rating} readOnly />
           <span>({property?.rating})</span>
         </RatingContainer>
 
@@ -251,7 +124,8 @@ const PropertyDetails = () => {
           </Button>
         </BookingContainer>
       </Right>
-    </Container>
+    </Container>}</>
+    
   );
 };
 

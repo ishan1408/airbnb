@@ -161,7 +161,7 @@ const PropertyCard = ({ property }) => {
         <Desc>{property?.desc}</Desc>
         <Location>{property?.location}</Location>
         <Price>
-          ${property?.price?.org}
+          ${property?.price.org}
           <Strike>${property?.price?.mrp}</Strike>
           <Percent>${property?.price?.off}% off</Percent>
         </Price>

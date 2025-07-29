@@ -42,144 +42,29 @@ const CardWrapper = styled.div`
 `;
 
 const PropertyListing = () => {
-  const [properties, setProperties] = useState([
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      location: "Los, Angles",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-    {
-      _id: "12345",
-      img: "https://via.placeholder.com/250",
-      title: "Beautiful Beach House",
-      desc: "A stunning house located near the beach with amazing sea views.",
-      rating: "1.5",
-      price: {
-        org: 250,
-        mrp: 300,
-        off: 17,
-      },
-    },
-  ]);
+  const location = useLocation()
+  const [loading,setLoading] = useState(false)
+  const [properties, setProperties] = useState([]);
+  const {location:loc, checkInDate, checkOutDate} = location.state|| {};
+  const filter = `location=${loc}`
+
+  const getProperties = async () => {
+    setLoading(true);
+    await getAllProperty().then((res) => {
+      setProperties(res.data)
+      setLoading(false)
+    })
+  }
+
+  useEffect(()=>{
+    getProperties()
+  },[])
 
   return (
     <Container>
+      {loading?(
+        <CircularProgress/>
+      ): ( 
       <Property>
         <CardWrapper>
           {properties.map((property) => (
@@ -187,6 +72,7 @@ const PropertyListing = () => {
           ))}
         </CardWrapper>
       </Property>
+      )}
     </Container>
   );
 };
