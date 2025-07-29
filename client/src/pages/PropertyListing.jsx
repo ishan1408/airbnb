@@ -178,7 +178,17 @@ const PropertyListing = () => {
     },
   ]);
 
-  return <div>PropertyListing</div>;
+  return (
+    <Container>
+      <Property>
+        <CardWrapper>
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </CardWrapper>
+      </Property>
+    </Container>
+  );
 };
 
 export default PropertyListing;

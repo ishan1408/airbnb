@@ -75,7 +75,11 @@ const BookingContainer = styled.div`
 `;
 
 const PropertyDetails = () => {
-  const properties = [
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+
+
+  const propertyList  = [
     {
       _id: "12345",
       img: "https://via.placeholder.com/250",
@@ -210,7 +214,46 @@ const PropertyDetails = () => {
     },
   ];
 
-  return <div>PropertyDetails</div>;
+  const property = propertyList.find((item) => item._id === id);
+
+  if (!property) {
+    return <p>Property not found</p>;
+  }
+
+   return (
+    <Container>
+      <Image src={property?.img} alt={property?.title} />
+      <Right>
+        <Title>{property?.title}</Title>
+        <Desc>{property?.desc}</Desc>
+
+        <Price>
+          ${property?.price.org}
+          <span>${property?.price.mrp}</span>
+          <Percent>{property?.price.off}% Off</Percent>
+        </Price>
+
+        <RatingContainer>
+          <Rating value={parseFloat(property?.rating)} readOnly />
+          <span>({property?.rating})</span>
+        </RatingContainer>
+
+        <BookingContainer>
+          <DatePicker
+            label="Start Date"
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <DatePicker
+            label="End Date"
+            renderInput={(params) => <TextField {...params} />}
+          />
+          <Button variant="contained" color="secondary" text="Book Now">
+          </Button>
+        </BookingContainer>
+      </Right>
+    </Container>
+  );
 };
+
 
 export default PropertyDetails;
