@@ -131,7 +131,8 @@ const Mobileicons = styled.div`
 `;
 
 const TextButton = styled.div`
-  text-align: end;
+   background: none;
+  border: none;
   color: ${({ theme }) => theme.text_primary};
   cursor: pointer;
   font-size: 16px;
@@ -142,7 +143,8 @@ const TextButton = styled.div`
   }
 `;
 
-const Navbar = ({openAuth,setOpenAuth}) => {
+const Navbar = ({openAuth,setOpenAuth,currentUser}) => {
+  const dispatch = useDispatch()
   const [isOpen,setIsOpen] = useState(false);
   return (
     <Nav>
@@ -179,7 +181,16 @@ const Navbar = ({openAuth,setOpenAuth}) => {
         </NavItems>
 
         <ButtonContainer>
-          <Button type="secondary" text="SignIn" small onClick={() => setOpenAuth(!openAuth)}/>
+          {currentUser ? (
+            <>
+            <Avatar src={currentUser?.img} sx={{
+              color:"inherit",
+              fontSize:"28px",
+            }}>{currentUser?.name[0]}</Avatar>
+            <TextButton onClick={()=> dispatch(logout())}>Logout</TextButton>
+            </>
+          ) : (
+          <Button type="secondary" text="SignIn" small onClick={() => setOpenAuth(!openAuth)}/>)}
         </ButtonContainer>
       </NavbarContainer>
     </Nav>

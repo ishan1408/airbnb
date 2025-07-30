@@ -26,17 +26,52 @@ const Span = styled.div`
   color: ${({ theme }) => theme.secondary + 90};
 `;
 
-const Signup = () => {
+const Signup = ({ setOpenAuth }) => {
+  const dispatch = useDispatch();
+    const [loading,setLoading] = useState(false);
+    const [buttonDisabled,setButtonDisabled] = useState(false);
+    const [name,setName] = useState();
+    const [email,setEmail] = useState();
+    const [password,setPassword] = useState();
+  
+    const validateInputs = () => {
+      if(!email || !password){
+        alert("Please fill in all fields")
+        return false;
+      }
+      return true;
+    }
+  
+    const handleSignUp = async () => {
+      setLoading(true)
+      setButtonDisabled(true)
+  
+      if(validateInputs){
+        await UserSignUp({name, email,password})
+        .then((res) => {
+          dispatch(loginSuccess(res.data));
+          setOpenAuth(false)
+        })
+        .catch((err) => {
+          alert(err.response.data.message)
+        })
+        .finally(() => {
+          setLoading   (false)
+          setButtonDisabled(false)
+        })
+      }
+    }
+  
   return <Container>
     <div>
       <Title>Welcome to Airbnb</Title>
       <Span>Please Sign Up with your details here</Span>
     </div>
     <div style={{display:"flex",gap:"20px",flexDirection:"column"}}>
-      <TextInput label="Full Name" placeholder="Enter your full name"/>
-      <TextInput label="Email Address" placeholder="Enter your email address"/>
-      <TextInput label="Password" placeholder="Enter your password" password/>
-      <Button text="Sign Up"/>
+      <TextInput label="Full Name" placeholder="Enter your full name" handelChange={(e) => setName(e.target.value)}/>
+      <TextInput label="Email Address" placeholder="Enter your email address" handelChange={(e) => setEmail(e.target.value)}/>
+      <TextInput label="Password" placeholder="Enter your password" password handelChange={(e) => setPassword(e.target.value)}/>
+      <Button text="Sign Up" onClick={handleSignUp} isLoading={loading} isDisabled={buttonDisabled}/>
     </div>
   </Container>;;
 };

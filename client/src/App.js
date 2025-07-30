@@ -27,11 +27,12 @@ const Container = styled.div`
 `;
 
 function App() {
+  const {currentUser} = useSelector((state) => state.user)
   const [openAuth,setOpenAuth] = useState(false)
   return <ThemeProvider theme={lightTheme}>
     <BrowserRouter>
     <Container background={background}>
-      <Navbar setOpenAuth={setOpenAuth} openAuth={openAuth}/>
+      <Navbar setOpenAuth={setOpenAuth} openAuth={openAuth} currentUser={currentUser}/>
       <Routes>
         <Route path="/" exact element={<Home/>}/>
         <Route path="/properties" exact element={<PropertyListing/>}/>
