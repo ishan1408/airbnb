@@ -162,6 +162,9 @@ const Navbar = ({openAuth,setOpenAuth,currentUser}) => {
             <Navlink to="/properties" onClick={() => setIsOpen(!isOpen)}>Places to stay</Navlink>
             <Navlink to="/contact" onClick={() => setIsOpen(!isOpen)}>Contact</Navlink>
             <Navlink to="/blogs" onClick={() => setIsOpen(!isOpen)}>Blogs</Navlink>
+            {currentUser ? (
+              <Button text="Logout" small onClick={() => dispatch(logout)}/>
+            ):(
           <div style={{
             flex:1,
             display:"flex",
@@ -169,7 +172,7 @@ const Navbar = ({openAuth,setOpenAuth,currentUser}) => {
           }}>
             <Button type="secondary" text="SignUp" small onClick={() => setOpenAuth(!openAuth)}/>
             <Button text="SignIn" small onClick={() => setOpenAuth(!openAuth)}/>
-          </div>
+          </div>)}
           </MobileMenu>
         )}
 
@@ -180,9 +183,26 @@ const Navbar = ({openAuth,setOpenAuth,currentUser}) => {
           <Navlink to="/blogs">Blogs</Navlink>
         </NavItems>
 
+        <Mobileicons>
+          {currentUser && (
+            <>
+            <Navlink to="/favorite">
+            <FavoriteBorder sx={{color:"inherit",fontSize:"28px"}}/>
+            </Navlink>
+            <Avatar src={currentUser?.img} sx={{
+              color:"inherit",
+              fontSize:"28px",
+            }}>{currentUser?.name[0]}</Avatar>
+            </>
+          )}
+        </Mobileicons>
+
         <ButtonContainer>
           {currentUser ? (
             <>
+            <Navlink to="/favorite">
+            <FavoriteBorder sx={{color:"inherit",fontSize:"28px"}}/>
+            </Navlink>
             <Avatar src={currentUser?.img} sx={{
               color:"inherit",
               fontSize:"28px",

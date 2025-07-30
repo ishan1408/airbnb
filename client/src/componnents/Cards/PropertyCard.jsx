@@ -141,14 +141,79 @@ const Percent = styled.div`
 
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const [favorite,setFavorite] = useState(false)
+  const [favoriteLoading,setFavoriteLoading] = useState(false)
+
+  const checkFavourite = async () => {
+  setFavoriteLoading(true);
+  const token = localStorage.getItem("airbnb-app-token");
+
+  try {
+    const res = await getFavourite(token);
+    const isFavorite = res.data?.some(
+      (fav) => fav._id === property?._id
+    );
+    setFavorite(isFavorite);
+  } catch (err) {
+    dispatch(openSnackbar({ message: err.response?.data?.message || "Something went wrong", severity: "error" }));
+  } finally {
+    setFavoriteLoading(false);
+  }
+};
+
+
+  const addFavourite = async () => {
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("airbnb-app-token");
+    await addToFavourite(token, { propertyId: property?._id })
+      .then((res) => {
+        setFavorite(true);
+      })
+      .catch((err) => {
+        alert(err)
+      }).finally(() => {
+        setFavoriteLoading(false);
+      })
+  };
+
+  const removeFavourite = async () => {
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("airbnb-app-token");
+    await deleteFromFavourite(token, { propertyId: property?._id })
+      .then((res) => {
+        setFavorite(false);
+      })
+      .catch((err) => {
+        alert(err)
+      }).finally(() => {
+        setFavoriteLoading(false);
+      })
+  };
+
+  useEffect(() => {
+    checkFavourite();
+  }, []);
 
   return (
     <Card>
       <Top>
         <Image src={property?.img} alt={property?.title} />
         <Menu>
-          <MenuItem>
-            <FavoriteBorder sx={{ fontSize: '20px' }} />
+          <MenuItem 
+          onClick={()=>(favorite ? removeFavourite(): addFavourite())}
+          >
+            {favoriteLoading ? (
+              <CircularProgress sx={{ fontSize: '20px' }} />
+            ) : (
+              <>
+              {favorite ? (
+              <FavoriteRounded sx={{ fontSize: '20px', color: 'red' }} />
+            ) : (
+              <FavoriteBorder sx={{ fontSize: '20px' }} />
+            )}
+            </>
+            )}
           </MenuItem>
         </Menu>
         <Rate>
@@ -161,7 +226,7 @@ const PropertyCard = ({ property }) => {
         <Desc>{property?.desc}</Desc>
         <Location>{property?.location}</Location>
         <Price>
-          ${property?.price.org}
+          ${property?.price?.org}
           <Strike>${property?.price?.mrp}</Strike>
           <Percent>${property?.price?.off}% off</Percent>
         </Price>
