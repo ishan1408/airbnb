@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import PropertyCard from "../componnents/Cards/PropertyCard";
-import { getAllCourses, getAllProperty } from "../api";
+import { getAllProperty } from "../api";
 import { CircularProgress } from "@mui/material";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   padding: 20px 0;
@@ -42,11 +42,12 @@ const CardWrapper = styled.div`
 `;
 
 const PropertyListing = () => {
-  const location = useLocation()
+  // const location = useLocation()
   const [loading,setLoading] = useState(false)
   const [properties, setProperties] = useState([]);
-  const {location:loc, checkInDate, checkOutDate} = location.state|| {};
-  const filter = `location=${loc}`
+  // const {location:loc, checkInDate, checkOutDate} = location.state|| {};
+  // const {location:loc } = location.state|| {};
+  // const filter = `location=${loc}`
 
   const getProperties = async () => {
     setLoading(true);
