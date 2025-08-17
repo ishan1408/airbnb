@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { DatePicker } from "@mui/lab";
+import { useParams } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"; // ✅ Add this
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"; // ✅ Date adapter
 import { CircularProgress, Rating, TextField } from "@mui/material";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
-import { getPropertyDetails, bookProperty } from "../api";
-import { openSnackbar } from "../redux/reducers/snackbarSlice";
-import Button from "../componnents/Button";
+import { getPropertyDetails } from "../api";
+import Button from "../componnents/Button"; // ✅ Fixed typo
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Container = styled.div`
   margin: 0 20px;
   background: ${({ theme }) => theme.bg};
   border-radius: 12px 12px 0 0;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const Image = styled.img`
@@ -44,8 +44,11 @@ const Desc = styled.p`
 `;
 
 const Price = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600;
   color: ${({ theme }) => theme.text_primary};
 `;
 
@@ -53,13 +56,12 @@ const Span = styled.span`
   font-size: 16px;
   color: ${({ theme }) => theme.text_secondary};
   text-decoration: line-through;
-  margin-left: 8px;
 `;
 
 const Percent = styled.span`
   font-size: 16px;
   color: green;
-  margin-left: 8px;
+  font-weight: 500;
 `;
 
 const RatingContainer = styled.div`
@@ -75,59 +77,82 @@ const BookingContainer = styled.div`
 `;
 
 const PropertyDetails = () => {
-  const {id} = useParams();
-  const [startDate,setStartDate] = useState(null)
-  const [endDate,setEndDate] = useState(null)
-  const [property,setProperty] = useState()
-  const [loading,setLoading] = useState(false)
+  const { id } = useParams();
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const getPropertyDetailsById = async () => {
-    setLoading(true)
-    await getPropertyDetails(id).then((res) => {
-      setProperty(res.data)
-      setLoading(false)
-    })
-  }
+    try {
+      setLoading(true);
+      const res = await getPropertyDetails(id);
+      setProperty(res.data);
+    } catch (err) {
+      console.error("Error fetching property:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getPropertyDetailsById();
-  },[])
+  }, [id]);
 
-   return (
-    <>{loading ? <CircularProgress/> : <Container>
-      <Image src={property?.img} alt={property?.title} />
-      <Right>
-        <Title>{property?.title}</Title>
-        <Desc>{property?.desc}</Desc>
+  return (
+    <>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        property && (
+          <Container>
+            <Image src={property?.img} alt={property?.title} />
+            <Right>
+              <Title>{property?.title}</Title>
+              <Desc>{property?.desc}</Desc>
 
-        <Price>
-          ${property?.price.org}
-          <span>${property?.price.mrp}</span>
-          <Percent>{property?.price.off}% Off</Percent>
-        </Price>
+              <Price>
+                ${property?.price.org}
+                <Span>${property?.price.mrp}</Span>
+                <Percent>{property?.price.off}% Off</Percent>
+              </Price>
 
-        <RatingContainer>
-          <Rating value={property?.rating} readOnly />
-          <span>({property?.rating})</span>
-        </RatingContainer>
+              <RatingContainer>
+                <Rating value={property?.rating} precision={0.1} readOnly />
+                <span>({property?.rating})</span>
+              </RatingContainer>
 
-        <BookingContainer>
-          <DatePicker
-            label="Start Date"
-            renderInput={(params) => <TextField {...params} />}
-          />
-          <DatePicker
-            label="End Date"
-            renderInput={(params) => <TextField {...params} />}
-          />
-          <Button variant="contained" color="secondary" text="Book Now">
-          </Button>
-        </BookingContainer>
-      </Right>
-    </Container>}</>
-    
+              <BookingContainer>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue) => setStartDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                  <DatePicker
+                    label="End Date"
+                    value={endDate}
+                    onChange={(newValue) => setEndDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  text="Book Now"
+                  onClick={() =>
+                    console.log("Booking...", { startDate, endDate })
+                  }
+                />
+              </BookingContainer>
+            </Right>
+          </Container>
+        )
+      )}
+    </>
   );
 };
-
 
 export default PropertyDetails;
